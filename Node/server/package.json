@@ -1,0 +1,24 @@
+{
+  "name": "mongodbProyect",
+  "version": "1.0.0",
+  "description": "Proyecto final del MongoDB NextU",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.16.4",
+    "mongodb": "^2.2.33"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "keywords": [
+    "mongodb",
+    "mongo",
+    "base",
+    "de",
+    "datos"
+  ],
+  "author": "Yanina Trossero",
+  "license": "ISC"
+}
