@@ -19,7 +19,9 @@ module.exports = {
     existUser: existUser,
     validateCredentials: validateCredentials,
     getEvents: getEvents,
-    insertEvent: insertEvent
+    insertEvent: insertEvent,
+    deleteEvent: deleteEvent,
+    updateEvent: updateEvent
 }
 
 //<< -Métodos Públicos- >>
@@ -76,7 +78,7 @@ function searchUser(p_username){
                 w_username = p_username.trim();
                 if(!assertUsername(w_username, p_reject))
                     return;
-        
+
                 w_collection = p_db.db(_database).collection(_usersCollection);
                 w_user = w_collection.findOne({ usename: w_username });              
                   
@@ -126,7 +128,9 @@ function validateCredentials(p_username, p_password){
             if(!assertUser(w_username, w_pwd, p_reject))
                 return;
 
-            w_collection = p_db.collection(_usersCollection);
+            
+            w_collection = p_db.db(_database).collection(_usersCollection);
+            common.debugLog(w_collection);
             w_json = createUserJson(w_username, w_pwd);
             w_user = w_collection.findOne(w_json);
 
@@ -199,7 +203,51 @@ function insertEvent(p_event){
 }
 
 function deleteEvent(p_eventName){
+    return new Promise((p_resolve, p_reject) => {
+        mongoClient.connect(_url, (p_error, p_db) => {
+            let w_collection = null;
 
+            try{
+                if(!assertDatabase(p_error))
+                    return;
+                
+                w_collection = p_db.db(_database).collection(_eventCollection);
+                w_collection.remove({ title: p_eventName });
+
+                p_db.close();
+                p_resolve();
+
+            }catch(p_err){
+                p_db.close();
+                p_reject(p_err);
+            }
+        });
+    });
+}
+
+function updateEvent(p_eventName, p_startDate, p_endDate){
+    return new Promise((p_resolve, p_reject) => {
+        mongoClient.connect(_url, (p_error, p_db) => {
+            let w_collection = null;
+
+            try{
+                if(!assertDatabase(p_error))
+                    return;
+                
+                w_collection = p_db.db(_database).collection(_eventCollection);
+                w_collection.findOneAndUpdate(
+                    { title: p_eventName },
+                    { title: p_eventName, start: p_startDate, end: p_endDate});
+
+                p_db.close();
+                p_resolve();
+
+            }catch(p_err){
+                p_db.close();
+                p_reject(p_err);
+            }
+        });
+    });
 }
 
 //<< -Fín Métodos Públicos- >>

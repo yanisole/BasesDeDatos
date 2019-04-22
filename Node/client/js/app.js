@@ -10,18 +10,34 @@ class EventManager {
     ///NOTA: Se agrega el parámetro "user" para traer los eventos
     ///de ese usuario únicamente.
     obtenerDataInicial() {        
-        let w_username = sessionStorage.getItem('user');
         let url = this.urlBase + "/all";
         $.get(url, (response) => {    
-            console.log(response);
             this.inicializarCalendario(response)
         })
     }
 
     eliminarEvento(evento) {
-        let eventId = evento.id
-        $.post('/events/delete/'+eventId, {id: eventId}, (response) => {
-            alert(response)
+        let eventId = evento.title
+        $.post('/events/delete/'+eventId, {id: eventId}, (response) => {   
+            alert(response);         
+        })
+    }
+
+    actualizarEvento(evento, deltaDay) {
+        let eventId = evento.title
+        let days = Number(deltaDay._days);
+        let end_date = null;
+        let start_date = new Date(evento.start._i);
+
+        start_date.setDate(start_date.getDate() + days);
+        if(evento.end){            
+            end_date = new Date(evento.end._i);
+            end_date.setDate(end_date.getDate() + days);
+        }
+
+        $.post('/events/update/'+eventId+'/'+start_date+'/'+end_date, 
+        {id: eventId, startdate: start_date, enddate: end_date}, (response) => {   
+            alert(response);         
         })
     }
 
@@ -98,8 +114,8 @@ class EventManager {
             droppable: true,
             dragRevertDuration: 0,
             timeFormat: 'H:mm',
-            eventDrop: (event) => {
-                this.actualizarEvento(event)
+            eventDrop: (event, deltaDay) => { 
+                this.actualizarEvento(event, deltaDay)
             },
             events: eventos,
             eventDragStart: (event,jsEvent) => {

@@ -50,9 +50,8 @@ app.post('/login', (p_req, p_res) => {
 ///Eventos del usuario
 app.get('/events/all', (p_req, p_res) => {
     crud.getEvents()
-    .then((p_events) => {
-        console.log('Eventos:', p_events);
-        //common.debugLog('Events: ', p_events);
+    .then((p_events) => {        
+        common.debugLog('Events: ', p_events);
         p_res.send(p_events);
     })
     .catch((p_err) => {
@@ -81,8 +80,19 @@ app.post('/events/new', (p_req, p_res) => {
 });
 
 app.post('/events/delete/:id', (p_req, p_res) => {
-    common.debugLog(req.body);
-    p_res.send('ok');
+    crud.deleteEvent(p_req.params.id)
+    .then(() => { p_res.send('Evento Eliminado'); })
+    .catch((p_err) => {
+        common.printError(p_err);        
+    });
+});
+
+app.post('/events/update/:id/:startdate/:enddate', (p_req, p_res) => {
+    crud.updateEvent(p_req.params.id, p_req.params.startdate, p_req.params.enddate)
+    .then(() => { p_res.send('Evento Actualizado'); })
+    .catch((p_err) => {
+        common.printError(p_err);
+    });
 });
 
 ///Descr: Inicializo el servidor
