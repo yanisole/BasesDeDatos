@@ -8,7 +8,7 @@ class EventsManager {
 
 
     obtenerDataInicial() {
-        let url = '../server/getEvents.php'
+        let url = '../server/getEvents.php';
         $.ajax({
           url: url,
           dataType: "json",
@@ -16,8 +16,8 @@ class EventsManager {
           processData: false,
           contentType: false,
           type: 'GET',
-          success: (data) =>{
-            if (data.msg=="OK") {
+          success: (data) =>{       
+            if (data.msg=="OK") {              
               this.poblarCalendario(data.eventos)
             }else {
               alert(data.msg)
@@ -28,46 +28,46 @@ class EventsManager {
             alert("error en la comunicación con el servidor");
           }
         })
-
     }
 
     poblarCalendario(eventos) {
-        $('.calendario').fullCalendar({
-            header: {
-        		left: 'prev,next today',
-        		center: 'title',
-        		right: 'month,agendaWeek,basicDay'
-        	},
-        	defaultDate: '2016-11-01',
-        	navLinks: true,
-        	editable: true,
-        	eventLimit: true,
-          droppable: true,
-          dragRevertDuration: 0,
-          timeFormat: 'H:mm',
-          eventDrop: (event) => {
-              this.actualizarEvento(event)
-          },
-          events: eventos,
-          eventDragStart: (event,jsEvent) => {
-            $('.delete-btn').find('img').attr('src', "img/trash-open.png");
-            $('.delete-btn').css('background-color', '#a70f19')
-          },
-          eventDragStop: (event,jsEvent) =>{
-            var trashEl = $('.delete-btn');
-            var ofs = trashEl.offset();
-            var x1 = ofs.left;
-            var x2 = ofs.left + trashEl.outerWidth(true);
-            var y1 = ofs.top;
-            var y2 = ofs.top + trashEl.outerHeight(true);
-            if (jsEvent.pageX >= x1 && jsEvent.pageX<= x2 &&
-                jsEvent.pageY >= y1 && jsEvent.pageY <= y2) {
-                  this.eliminarEvento(event, jsEvent)
-                  $('.calendario').fullCalendar('removeEvents', event.id);
-            }
+      $('.calendario').fullCalendar({
+        header: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'month,agendaWeek,basicDay'
+      },
+      defaultDate: new Date(),
+      navLinks: true,
+      editable: true,
+      eventLimit: true,
+      droppable: true,
+      dragRevertDuration: 0,
+      timeFormat: 'H:mm',
+      eventDrop: (event) => {
+          this.actualizarEvento(event)
+      },
+      events: eventos,
+      eventDragStart: (event,jsEvent) => {
+        $('.delete-btn').find('img').attr('src', "img/trash-open.png");
+        $('.delete-btn').css('background-color', '#a70f19')
 
+      },
+      eventDragStop: (event,jsEvent) =>{
+          var trashEl = $('.delete-btn');
+          var ofs = trashEl.offset();
+          var x1 = ofs.left;
+          var x2 = ofs.left + trashEl.outerWidth(true);
+          var y1 = ofs.top;
+          var y2 = ofs.top + trashEl.outerHeight(true);
+          if (jsEvent.pageX >= x1 && jsEvent.pageX<= x2 &&
+              jsEvent.pageY >= y1 && jsEvent.pageY <= y2) {
+                this.eliminarEvento(event, jsEvent)
+                $('.calendario').fullCalendar('removeEvents', event.id);
           }
-        })
+
+        }
+      })
     }
 
     anadirEvento(){
@@ -92,27 +92,25 @@ class EventsManager {
         contentType: false,
         data: form_data,
         type: 'POST',
-        success: (data) =>{
+        success: (data) =>{   
           if (data.msg=="OK") {
             alert('Se ha añadido el evento exitosamente')
-            if (document.getElementById('allDay').checked) {
+            if (document.getElementById('allDay').checked) {              
               $('.calendario').fullCalendar('renderEvent', {
+                id: data.id,
                 title: $('#titulo').val(),
                 start: $('#start_date').val(),
                 allDay: true
               })
             }else {
               $('.calendario').fullCalendar('renderEvent', {
+                id: data.id, 
                 title: $('#titulo').val(),
                 start: $('#start_date').val()+" "+$('#start_hour').val(),
                 allDay: false,
                 end: $('#end_date').val()+" "+$('#end_hour').val()
               })
             }
-
-
-
-
           }else {
             alert(data.msg)
           }
@@ -153,19 +151,20 @@ class EventsManager {
 
     actualizarEvento(evento) {
         let id = evento.id,
-            start = moment(evento.start).format('YYYY-MM-DD HH:mm:ss'),
-            end = moment(evento.end).format('YYYY-MM-DD HH:mm:ss'),
+            start = moment(evento.start).format('YYYY-MM-DD HH:mm:ss'),           
+            end =  (evento.end != null) ? moment(evento.end).format('YYYY-MM-DD HH:mm:ss') : null,
             form_data = new FormData(),
             start_date,
-            end_date,
+            end_date = null,
             start_hour,
-            end_hour
-
-        start_date = start.substr(0,10)
-        end_date = end.substr(0,10)
+            end_hour = null
+       
+        start_date = start.substr(0,10) 
         start_hour = start.substr(11,8)
-        end_hour = end.substr(11,8)
-
+        if(end != null) {
+          end_date = end.substr(0,10)        
+          end_hour = end.substr(11,8)
+        }
 
         form_data.append('id', id)
         form_data.append('start_date', start_date)
@@ -193,7 +192,6 @@ class EventsManager {
           }
         })
     }
-
 }
 
 
