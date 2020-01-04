@@ -68,7 +68,7 @@ app.post('/events/new', (p_req, p_res) => {
         start: p_req.body.start,
         end: p_req.body.end
     };
-    //common.debugLog('request:', w_evt);
+
     console.log('request:', w_evt);
     crud.insertEvent(w_evt)
     .then(() => {

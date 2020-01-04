@@ -165,7 +165,7 @@ function getEvents(){
                                         
                     p_db.close();
 
-                    p_events.forEach((item) => w_events.push(createEventJson(item.title, item.start, item.end)));
+                    p_events.forEach((item) => w_events.push(createEventJson(item.title, item.start, item.end, item.startHour, item.endHour)));
                     p_resolve(w_events);
                   });
             }catch(p_err){
@@ -317,11 +317,13 @@ function createUserJson(p_username, p_password){
 ///p_username => Usuario al que pertenece el evento
 ///Resultado:
 ///Json
-function createEventJson(p_eventName, p_startDate, p_endDate){
+function createEventJson(p_eventName, p_startDate, p_endDate, p_startHour, p_endHour){
     return {
         title: p_eventName,
         start: p_startDate,
-        end: p_endDate
+        end: p_endDate,
+        start_hour: p_startHour,
+        end_hour: p_endHour
     };
 }
 //<< -Fín Métodos Privados- >>

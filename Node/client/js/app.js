@@ -19,8 +19,9 @@ class EventManager {
     eliminarEvento(evento) {
         let eventId = evento.title
         $.post('/events/delete/'+eventId, {id: eventId}, (response) => {   
-            alert(response);         
-        })
+            alert(response);
+            location.reload(true);           
+        });
     }
 
     actualizarEvento(evento, deltaDay) {
@@ -63,7 +64,9 @@ class EventManager {
                 let ev = {
                     title: title,
                     start: start,
-                    end: end
+                    end: end,
+                    start_hour: start_hour,
+                    end_hour: end_hour
                 }
                 $.post(url, ev, (response) => {
                     alert(response)
@@ -107,7 +110,8 @@ class EventManager {
                 center: 'title',
                 right: 'month,agendaWeek,basicDay'
             },
-            defaultDate: '2016-11-01',
+            defaultDate: moment().format("YYYY-MM-DD"),
+            //defaultDate: '2016-11-01',
             navLinks: true,
             editable: true,
             eventLimit: true,
